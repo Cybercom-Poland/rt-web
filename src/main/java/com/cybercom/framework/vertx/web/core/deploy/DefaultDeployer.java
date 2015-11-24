@@ -13,8 +13,18 @@ public final class DefaultDeployer extends AbstractDeployer{
     }
 
     private List<Verticle> searchVerticles() {
+        final Set<Class<?>> classes = searchClasses();
+
+        return createObjects(classes);
+    }
+
+    private Set<Class<?>> searchClasses() {
         final ClassScanner classScanner = new ClassScanner();
-        final Set<Class<?>> classes = classScanner.getClassesAnnotatedWith(com.cybercom.framework.vertx.web.core.annotation.Verticle.class);
+
+        return classScanner.getClassesAnnotatedWith(com.cybercom.framework.vertx.web.core.annotation.Verticle.class);
+    }
+
+    private List<Verticle> createObjects(final Set<Class<?>> classes) {
         final ClassCreator classCreator = new ClassCreator();
 
         return classCreator.create(classes);
