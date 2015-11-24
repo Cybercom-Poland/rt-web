@@ -1,4 +1,4 @@
-package java.com.cybercom.framework.vertx.web.core.loader;
+package com.cybercom.framework.vertx.web.core.deploy;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Verticle;
