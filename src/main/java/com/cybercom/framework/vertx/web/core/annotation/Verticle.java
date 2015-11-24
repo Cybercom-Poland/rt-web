@@ -9,6 +9,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Verticle {
     boolean worker() default false;
-    String address();
     int instances() default 1;
 }
