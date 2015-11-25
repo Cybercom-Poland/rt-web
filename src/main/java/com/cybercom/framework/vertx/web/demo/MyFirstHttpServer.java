@@ -1,4 +1,4 @@
-package com.cybercom.framework.vertx.web.core.example;
+package com.cybercom.framework.vertx.web.demo;
 
 import com.cybercom.framework.vertx.web.core.annotation.Verticle;
 import com.cybercom.framework.vertx.web.core.server.http.AbstractHttpServer;

@@ -1,15 +1,15 @@
 package com.cybercom.framework.vertx.web.core.server.http;
 
+import com.cybercom.framework.vertx.web.core.messages.MessageCodes;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.StaticHandler;
 
 public abstract class AbstractHttpServer extends AbstractVerticle {
     private Router router;
-    public final static String HTTP_SERVER_GET_EVENT = "HttpServer.get";
-
 
     public AbstractHttpServer() {
         this.router = Router.router(vertx);
@@ -31,10 +31,12 @@ public abstract class AbstractHttpServer extends AbstractVerticle {
 
     private void configureRouting() {
         EventBus eb = vertx.eventBus();
-        router.get().handler(routingContext -> {
-            eb.send(HTTP_SERVER_GET_EVENT, routingContext.request().absoluteURI(), reply -> {
-                routingContext.response().end(reply.result().body().toString());
+        //router.route("/assets/*").handler(StaticHandler.create());
+        router.get("/").handler(routingContext -> {
+            eb.send(MessageCodes.MESSAGE_GET_VIEW, routingContext.request().uri(), response -> {
+                routingContext.response().end();
             });
+
         });
     }
 
