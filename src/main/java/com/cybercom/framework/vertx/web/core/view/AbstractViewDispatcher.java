@@ -5,13 +5,14 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.ext.web.Router;
 
 public abstract class AbstractViewDispatcher extends AbstractVerticle {
-    private Router router = Router.router(vertx);
 
 
     @Override
     public void start() throws Exception {
-
+        configureRouting();
     }
 
-    protected abstract void configureStaticResources(Router router);
+    protected abstract void configureStaticResources();
+
+    protected abstract void configureRouting();
 }
