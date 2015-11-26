@@ -13,9 +13,16 @@ public class TestVerticle extends AbstractVerticle {
     }
 
     @Routing(URL = "/methodToInvoke")
-    public String  methodToInvoke() {
+    public String methodToInvoke() {
         System.out.println("Invoked method: methodToInvoke");
 
         return "Heh dziala";
+    }
+
+    @Routing(URL = "/secondMethod")
+    public String secondMethod() {
+        System.out.println("Invoked method: methodToInvoke");
+
+        return "ostro";
     }
 }
