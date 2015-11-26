@@ -21,7 +21,7 @@ public final class DefaultDeployer extends AbstractDeployer{
     private Set<Class<?>> searchClasses() {
         final ClassScanner classScanner = new ClassScanner();
 
-        return classScanner.getClassesAnnotatedWith(com.cybercom.framework.vertx.web.core.annotation.Verticle.class);
+        return classScanner.getClassesAnnotatedWith(com.cybercom.framework.vertx.web.core.routing.annotation.Verticle.class);
     }
 
     private List<Verticle> createObjects(final Set<Class<?>> classes) {

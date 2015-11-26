@@ -1,12 +1,11 @@
 package com.cybercom.framework.vertx.web.core.server.http;
 
 import com.cybercom.framework.vertx.web.core.messages.MessageCodes;
-import io.vertx.core.AbstractVerticle;
+import com.cybercom.framework.vertx.web.core.verticle.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.handler.StaticHandler;
 
 public abstract class AbstractHttpServer extends AbstractVerticle {
     private Router router;
@@ -37,6 +36,13 @@ public abstract class AbstractHttpServer extends AbstractVerticle {
                 routingContext.response().end();
             });
 
+        });
+
+        //FIXME TEMPORARY FOR TEST
+        router.get("/test").handler(routingContext -> {
+            eb.send("/test", "/methodToInvoke", response -> {
+                routingContext.response().end(response.result().body().toString());
+            });
         });
     }
 

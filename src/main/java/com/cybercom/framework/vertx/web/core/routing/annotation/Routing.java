@@ -1,4 +1,4 @@
-package com.cybercom.framework.vertx.web.core.annotation;
+package com.cybercom.framework.vertx.web.core.routing.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,8 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Verticle {
-    boolean worker() default false;
-    int instances() default 1;
+@Target( {ElementType.TYPE, ElementType.METHOD})
+public @interface Routing {
+    String URL();
 }
