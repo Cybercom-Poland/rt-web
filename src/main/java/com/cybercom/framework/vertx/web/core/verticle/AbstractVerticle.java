@@ -1,21 +1,33 @@
 package com.cybercom.framework.vertx.web.core.verticle;
 
+import com.cybercom.framework.vertx.web.core.error.ErrorCodes;
 import com.cybercom.framework.vertx.web.core.routing.annotation.Routing;
 import com.cybercom.framework.vertx.web.core.scanner.ClassScanner;
 import com.cybercom.framework.vertx.web.core.scanner.method.MethodWithRouting;
+import com.cybercom.framework.vertx.web.core.serializer.DefaultSerializer;
+import com.cybercom.framework.vertx.web.core.serializer.SerializerException;
+import com.cybercom.framework.vertx.web.core.serializer.spec.Serializer;
+import com.cybercom.framework.vertx.web.core.server.http.request.Request;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.Message;
+import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public abstract class AbstractVerticle extends io.vertx.core.AbstractVerticle {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractVerticle.class);
+
     private final List<MethodWithRouting> methodWithRoutings;
+    private final Serializer serializer;
 
     public AbstractVerticle() {
         methodWithRoutings = new ArrayList<>();
+        serializer = new DefaultSerializer();
     }
 
     @Override
@@ -38,17 +50,31 @@ public abstract class AbstractVerticle extends io.vertx.core.AbstractVerticle {
         }
     }
 
-    //TODO Object to better object (String for test) and parameters support. Need codec support
-    private void handleMethodRequest(Message<String> request) {
-        final String body = request.body();
-        final Optional<MethodWithRouting> methodToInvoke = findMethodToInvoke(body);
+    private void handleMethodRequest(final Message<JsonObject> requestMessage) {
+        try {
+            final Request request = serializer.deserialize(requestMessage.body(), Request.class);
+            handleRequest(request, requestMessage);
+        } catch (SerializerException e) {
+            LOG.error("Can not deserialize request", e);
+            requestMessage.fail(ErrorCodes.CAN_NOT_DESERIALIZE_REQUEST, e.getMessage());
+        }
+    }
 
-        if(methodToInvoke.isPresent()) {
-            final MethodWithRouting methodWithRouting = methodToInvoke.get();
+    private void handleRequest(final Request request, final Message<JsonObject> requestMessage){
+        final String methodToInvoke = request.getMethodToInvoke();
+        handleMethodInvocation(requestMessage, methodToInvoke);
+    }
+
+    private void handleMethodInvocation(final Message<JsonObject> requestMessage, String methodToInvoke) {
+        final Optional<MethodWithRouting> methodToInvokeOptional = findMethodToInvoke(methodToInvoke);
+
+        if(methodToInvokeOptional.isPresent()) {
+            final MethodWithRouting methodWithRouting = methodToInvokeOptional.get();
             final Method method = methodWithRouting.getMethod();
-
             final Object response = invokeMethod(method);
-            request.reply(response);
+            requestMessage.reply(response);
+        } else {
+            requestMessage.fail(ErrorCodes.METHOD_NOT_FOUND, methodToInvoke + " not found");
         }
     }
 
@@ -60,7 +86,7 @@ public abstract class AbstractVerticle extends io.vertx.core.AbstractVerticle {
         try {
             return method.invoke(this);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Error while invoking method", e);
         }
 
         return new Object();

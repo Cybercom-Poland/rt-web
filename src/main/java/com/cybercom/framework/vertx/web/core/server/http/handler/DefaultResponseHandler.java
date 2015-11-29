@@ -6,7 +6,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.eventbus.Message;
 
 final class DefaultResponseHandler<T> implements Handler<AsyncResult<Message<T>>> {
-    private final  RoutingContextWrapper routingContext;
+    private final RoutingContextWrapper routingContext;
 
     public DefaultResponseHandler(RoutingContextWrapper routingContext) {
         this.routingContext = routingContext;
@@ -15,7 +15,7 @@ final class DefaultResponseHandler<T> implements Handler<AsyncResult<Message<T>>
     @Override
     public void handle(final AsyncResult<Message<T>> event) {
         if (event.succeeded()) {
-            routingContext.response(event.result().body().toString());
+            routingContext.response(event.result().body());
         } else {
             routingContext.badRequest();
         }
