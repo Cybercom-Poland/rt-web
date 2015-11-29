@@ -6,6 +6,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.StaticHandler;
 
 public final class HandlerFactory {
     private HandlerFactory() {}
@@ -17,5 +18,9 @@ public final class HandlerFactory {
 
     public static Handler<RoutingContext> defaultGetHandler(final EventBus eventBus) {
         return new DefaultGetHandler(eventBus);
+    }
+
+    public static Handler<RoutingContext> defaultStaticResourceHandler() {
+        return StaticHandler.create();
     }
 }

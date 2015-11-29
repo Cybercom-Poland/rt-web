@@ -2,7 +2,9 @@ package com.cybercom.framework.vertx.web.core.server.http;
 
 import com.cybercom.framework.vertx.web.core.server.http.handler.HandlerFactory;
 import com.cybercom.framework.vertx.web.core.verticle.AbstractVerticle;
+import io.vertx.core.Context;
 import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
@@ -14,7 +16,9 @@ public abstract class AbstractHttpServer extends AbstractVerticle {
 
     private Router router;
 
-    public AbstractHttpServer() {
+    @Override
+    public void init(Vertx vertx, Context context) {
+        super.init(vertx, context);
         this.router = Router.router(vertx);
     }
 
@@ -33,7 +37,7 @@ public abstract class AbstractHttpServer extends AbstractVerticle {
     private void configureRouting() {
         final EventBus eventBus = vertx.eventBus();
 
-        final Handler<RoutingContext> getHandler = HandlerFactory.defaultGetHandler(eventBus);
+        final Handler<RoutingContext> getHandler = HandlerFactory.defaultStaticResourceHandler();
         router.get(ROOT_PATH).handler(getHandler);
     }
 
