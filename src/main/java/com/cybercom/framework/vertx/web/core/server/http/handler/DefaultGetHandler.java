@@ -12,8 +12,8 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.RoutingContext;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
 
 import static com.cybercom.framework.vertx.web.core.server.http.handler.HandlerFactory.defaultResponseHandler;
 
@@ -47,7 +47,11 @@ final class DefaultGetHandler implements Handler<RoutingContext> {
     }
 
     private String getAddressFromUri(String uri) {
-        String[] uriPartials = splitUri(uri);
+        List<String> uriPartials = splitUri(uri);
+        if (!uriPartials.isEmpty()) {
+            int PREFIX_INDEX = 0;
+            uriPartials.remove(PREFIX_INDEX);
+        }
         for (String partial : uriPartials) {
             if (partial.length() > 1) {
                 return partial;
@@ -56,19 +60,21 @@ final class DefaultGetHandler implements Handler<RoutingContext> {
         return "";
     }
 
-    private String[] splitUri(String uri) {
-        return uri.split("(?=/)");
-    }
-
     private String getMessageFromUri(String uri) {
-        if (uri.isEmpty()) {
+        List<String> uriPartials = splitUri(uri);
+        if (uriPartials.size() < 2) {
             return "";
         }
-        int indexOfSecondSlash = uri.indexOf("/", 1);
-        if (indexOfSecondSlash > -1) {
-            return uri.substring(indexOfSecondSlash);
-        }
-        return "";
+        uriPartials.subList(0, 2).clear();
+
+        StringJoiner message = new StringJoiner("");
+        uriPartials.stream().filter(partial -> partial.length() > 1).forEach(message::add);
+
+        return message.toString();
+    }
+
+    private List<String> splitUri(String uri) {
+        return new ArrayList<>(Arrays.asList(uri.split("(?=/)")));
     }
 
     private void handle(final RoutingContextWrapper routingContext, final String address, final String message, final

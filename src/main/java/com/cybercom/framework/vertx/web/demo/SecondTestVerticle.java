@@ -7,7 +7,7 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
 @Verticle
-@Routing(URL = "/api")
+@Routing(URL = "/second")
 public class SecondTestVerticle extends AbstractVerticle {
     private static final Logger LOG = LoggerFactory.getLogger(SecondTestVerticle.class);
 
