@@ -49,8 +49,8 @@ final class DefaultGetHandler implements Handler<RoutingContext> {
     private String getAddressFromUri(String uri) {
         List<String> uriPartials = splitUri(uri);
         if (!uriPartials.isEmpty()) {
-            int PREFIX_INDEX = 0;
-            uriPartials.remove(PREFIX_INDEX);
+            int prefixIndex = 0;
+            uriPartials.remove(prefixIndex);
         }
         for (String partial : uriPartials) {
             if (partial.length() > 1) {
@@ -74,7 +74,7 @@ final class DefaultGetHandler implements Handler<RoutingContext> {
     }
 
     private List<String> splitUri(String uri) {
-        return new ArrayList<>(Arrays.asList(uri.split("(?=/)")));
+        return Arrays.asList(uri.split("(?=/)"));
     }
 
     private void handle(final RoutingContextWrapper routingContext, final String address, final String message, final
