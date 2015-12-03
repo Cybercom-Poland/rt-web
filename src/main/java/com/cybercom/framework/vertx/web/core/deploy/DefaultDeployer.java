@@ -17,11 +17,11 @@ public final class DefaultDeployer extends AbstractDeployer{
     }
     
     @Override
-    protected List<VerticleConfig> verticles() {
+    protected List<VerticleWithConfig> verticles() {
         return getVerticlesConfigs();
     }
 
-    private List<VerticleConfig> getVerticlesConfigs() {
+    private List<VerticleWithConfig> getVerticlesConfigs() {
         final List<Verticle> verticles = findVerticles();
 
         return buildVerticlesConfigs(verticles);
@@ -43,11 +43,11 @@ public final class DefaultDeployer extends AbstractDeployer{
         return classCreator.create(classes);
     }
 
-    private List<VerticleConfig> buildVerticlesConfigs(final List<Verticle> verticles) {
+    private List<VerticleWithConfig> buildVerticlesConfigs(final List<Verticle> verticles) {
         return verticles.stream().map(verticle -> buildVerticleConfig(verticle)).collect(Collectors.toList());
     }
     
-    private VerticleConfig buildVerticleConfig(final Verticle verticle) {
+    private VerticleWithConfig buildVerticleConfig(final Verticle verticle) {
         final Optional<com.cybercom.framework.vertx.web.core.routing.annotation.Verticle> annotation
                 = classScanner.getAnnotation(verticle.getClass(), com.cybercom.framework.vertx.web.core.routing
                 .annotation.Verticle.class);
@@ -55,6 +55,6 @@ public final class DefaultDeployer extends AbstractDeployer{
         final com.cybercom.framework.vertx.web.core.routing.annotation.Verticle verticleAnnotation = annotation
                 .orElseThrow(() -> new DeployException("Can not deploy " + verticle.getClass()));
 
-        return new VerticleConfig(verticle, verticleAnnotation.instances(), verticleAnnotation.worker());
+        return new VerticleWithConfig(verticle, verticleAnnotation.instances(), verticleAnnotation.worker());
     }
 }

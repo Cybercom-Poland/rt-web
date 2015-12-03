@@ -12,21 +12,21 @@ public abstract class AbstractDeployer extends AbstractVerticle {
 
     @Override
     public void start() throws Exception {
-        final List<VerticleConfig> VerticlesToDeploy = verticles();
+        final List<VerticleWithConfig> VerticlesToDeploy = verticles();
         deployVerticles(VerticlesToDeploy);
     }
 
-    private void deployVerticles(final List<VerticleConfig> verticles) {
+    private void deployVerticles(final List<VerticleWithConfig> verticles) {
         LOG.info("Found " + verticles.size() + " verticles");
         verticles.stream().forEach(this::deployVerticle);
     }
 
-    private void deployVerticle(final VerticleConfig verticleConfig) {
-        final Verticle verticle = verticleConfig.getVerticle();
+    private void deployVerticle(final VerticleWithConfig verticleWithConfig) {
+        final Verticle verticle = verticleWithConfig.getVerticle();
         final DeploymentOptions deploymentOptions = new DeploymentOptions();
-        deploymentOptions.setWorker(verticleConfig.isWorker());
+        deploymentOptions.setWorker(verticleWithConfig.isWorker());
 
-        for(int i=0; i < verticleConfig.getInstances(); i++) {
+        for(int i = 0; i < verticleWithConfig.getInstances(); i++) {
             deployVerticle(verticle, deploymentOptions);
         }
     }
@@ -38,5 +38,5 @@ public abstract class AbstractDeployer extends AbstractVerticle {
         LOG.info("Deployed: " + verticle.getClass().getSimpleName());
     }
 
-    protected abstract List<VerticleConfig> verticles();
+    protected abstract List<VerticleWithConfig> verticles();
 }

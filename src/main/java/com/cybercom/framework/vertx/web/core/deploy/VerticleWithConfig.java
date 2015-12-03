@@ -2,12 +2,12 @@ package com.cybercom.framework.vertx.web.core.deploy;
 
 import io.vertx.core.Verticle;
 
-public final class VerticleConfig {
+public final class VerticleWithConfig {
     private final Verticle verticle;
     private final int instances;
     private final boolean worker;
 
-    public VerticleConfig(final Verticle verticle, final int instances, final boolean worker) {
+    public VerticleWithConfig(final Verticle verticle, final int instances, final boolean worker) {
         this.verticle = verticle;
         this.instances = instances;
         this.worker = worker;
