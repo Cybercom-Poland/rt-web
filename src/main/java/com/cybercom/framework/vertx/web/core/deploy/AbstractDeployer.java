@@ -32,8 +32,7 @@ public abstract class AbstractDeployer extends AbstractVerticle {
     }
 
     private void deployVerticle(final Verticle verticle, final DeploymentOptions deploymentOptions) {
-        LOG.info("Deploying: " + verticle.getClass().getSimpleName() + " instances: " + deploymentOptions
-                .getInstances() + " worker: " + deploymentOptions.isWorker());
+        LOG.info("Deploying: " + verticle.getClass().getSimpleName() + " worker: " + deploymentOptions.isWorker());
         getVertx().deployVerticle(verticle, deploymentOptions);
         LOG.info("Deployed: " + verticle.getClass().getSimpleName());
     }
