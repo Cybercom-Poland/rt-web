@@ -8,29 +8,20 @@ var modelObject = {
     }    
 };
 
-if (window.WebSocket) {
-    socket = new WebSocket("ws://localhost:8080/api");
-    socket.onmessage = function(event) {
-        console.log("Received data: " +event.data);
-    }
-    socket.onopen = function(event) {        
-        console.log("Web Socket opened");    
-    };
-    socket.onclose = function(event) {
-        console.log("Web Socket closed");    
-    };
-} else {
-    alert("Your browser does not support Websockets. Use something modern!");
-}
+var sock = new SockJS('localhost:8080/ws');
 
-function send(message) {
-    if (!window.WebSocket) {
-        return;
-    }
-    if (socket.readyState == WebSocket.OPEN) {
-        socket.send(modelObject);
-        console.log("Data send to web socket");    
-    } else {
-        console.log("Web socked is not opened");    
-    }
+sock.onopen = function() {
+  console.log('open');
+};
+
+sock.onmessage = function(e) {
+  console.log('message', e.data);
+};
+
+sock.onclose = function() {
+  console.log('close');
+};
+
+var send = function() {
+    sock.send(modelObject);
 }

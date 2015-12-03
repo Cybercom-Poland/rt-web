@@ -13,6 +13,7 @@ import io.vertx.ext.web.RoutingContext;
 
 public abstract class AbstractHttpServer extends AbstractVerticle {
     private static final String API_PATH = "/api/*";
+    private static final String WEB_SOCKET_PATH = "/ws/*";
 
     private Router mainRouter;
 
@@ -38,7 +39,9 @@ public abstract class AbstractHttpServer extends AbstractVerticle {
         final EventBus eventBus = vertx.eventBus();
         final Handler<RoutingContext> staticResourcesHandler = HandlerFactory.defaultStaticResourceHandler();
         final Handler<RoutingContext> getHandler = HandlerFactory.defaultGetHandler(eventBus);
+        final Handler<RoutingContext> webSocketHandler = HandlerFactory.defaultWebSocketHandler(vertx);
         mainRouter.get(API_PATH).handler(getHandler);
+        mainRouter.get(WEB_SOCKET_PATH).handler(webSocketHandler);
         mainRouter.route().handler(staticResourcesHandler);
     }
 
@@ -46,13 +49,6 @@ public abstract class AbstractHttpServer extends AbstractVerticle {
 
     private void createServer(final HttpServerOptions httpServerOptions) {
         final HttpServer httpServer = getVertx().createHttpServer(httpServerOptions);
-        httpServer.websocketHandler(ws -> {
-            if (ws.path().equals("/api")) {
-                ws.handler(data -> ws.writeFinalTextFrame("just read from input following data: " + data.toString()));
-            } else {
-                ws.reject();
-            }
-        });
         httpServer.requestHandler(mainRouter::accept);
         httpServer.listen();
     }

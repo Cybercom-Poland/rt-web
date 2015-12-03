@@ -74,7 +74,7 @@ final class DefaultGetHandler implements Handler<RoutingContext> {
     }
 
     private List<String> splitUri(String uri) {
-        return Arrays.asList(uri.split("(?=/)"));
+        return new ArrayList<>(Arrays.asList(uri.split("(?=/)")));
     }
 
     private void handle(final RoutingContextWrapper routingContext, final String address, final String message, final
