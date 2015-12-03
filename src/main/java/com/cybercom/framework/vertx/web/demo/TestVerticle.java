@@ -6,7 +6,7 @@ import com.cybercom.framework.vertx.web.core.verticle.AbstractVerticle;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
-@Verticle
+@Verticle(instances = 2, worker = true)
 @Routing(URL = "/test")
 public class TestVerticle extends AbstractVerticle {
     private static final Logger LOG = LoggerFactory.getLogger(SecondTestVerticle.class);

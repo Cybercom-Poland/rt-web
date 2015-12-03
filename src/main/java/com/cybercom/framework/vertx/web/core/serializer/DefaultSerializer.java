@@ -1,10 +1,11 @@
 package com.cybercom.framework.vertx.web.core.serializer;
 
 import com.cybercom.framework.vertx.web.core.serializer.spec.Serializer;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.vertx.core.json.DecodeException;
+import io.vertx.core.json.EncodeException;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
-import java.io.IOException;
 
 public final class DefaultSerializer implements Serializer{
     private final ObjectMapper mapper;
@@ -16,10 +17,10 @@ public final class DefaultSerializer implements Serializer{
     @Override
     public JsonObject serialize(final Object objectToSerialize) throws SerializerException {
         try {
-            final String json = mapper.writeValueAsString(objectToSerialize);
+            final String json = Json.encode(objectToSerialize);
 
             return new JsonObject(json);
-        } catch (JsonProcessingException e) {
+        } catch (EncodeException e) {
             throw new SerializerException("Can not serialize", e);
         }
     }
@@ -29,8 +30,8 @@ public final class DefaultSerializer implements Serializer{
         final String json = jsonObject.toString();
 
         try {
-            return mapper.readValue(json, type);
-        } catch (IOException e) {
+            return Json.decodeValue(json, type);
+        } catch (DecodeException e) {
             throw new SerializerException("Can not deserialize", e);
         }
     }
