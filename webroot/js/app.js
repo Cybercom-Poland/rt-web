@@ -8,7 +8,7 @@ var modelObject = {
     }    
 };
 
-var sock = new SockJS('localhost:8080/ws');
+var sock = new SockJS('localhost:8081/ws');
 
 sock.onopen = function() {
   console.log('open');

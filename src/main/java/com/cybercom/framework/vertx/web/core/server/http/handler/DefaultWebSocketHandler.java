@@ -16,6 +16,7 @@ public class DefaultWebSocketHandler implements Handler<RoutingContext> {
 
         sockJSHandler.socketHandler(sockJSSocket -> {
             // Just echo the data back
+            //TODO this method should send message to eventbus
             sockJSSocket.handler(sockJSSocket::write);
         });
     }

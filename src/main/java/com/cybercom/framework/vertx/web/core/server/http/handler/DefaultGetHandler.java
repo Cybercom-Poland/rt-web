@@ -33,9 +33,9 @@ final class DefaultGetHandler implements Handler<RoutingContext> {
 
         final String uri = routingContext.uri();
         final String address = getAddressFromUri(uri);
-        final String message = getMessageFromUri(uri);
+        final String method = getMethodFromUri(uri);
 
-        if (address.isEmpty() || message.isEmpty()) {
+        if (address.isEmpty() || method.isEmpty()) {
             routingContext.badRequest();
             return;
         }
@@ -43,7 +43,7 @@ final class DefaultGetHandler implements Handler<RoutingContext> {
         final Object body = null;
         final Map<String, Object> parameters = new HashMap<>();
 
-        handle(routingContext, address, message, body, parameters);
+        handle(routingContext, address, method, body, parameters);
     }
 
     private String getAddressFromUri(String uri) {
@@ -60,7 +60,7 @@ final class DefaultGetHandler implements Handler<RoutingContext> {
         return "";
     }
 
-    private String getMessageFromUri(String uri) {
+    private String getMethodFromUri(String uri) {
         List<String> uriPartials = splitUri(uri);
         if (uriPartials.size() < 2) {
             return "";
@@ -77,10 +77,10 @@ final class DefaultGetHandler implements Handler<RoutingContext> {
         return new ArrayList<>(Arrays.asList(uri.split("(?=/)")));
     }
 
-    private void handle(final RoutingContextWrapper routingContext, final String address, final String message, final
+    private void handle(final RoutingContextWrapper routingContext, final String address, final String method, final
     Object body, final Map<String, Object> parameters) {
         try {
-            final JsonObject request = createRequest(address, message, body, parameters);
+            final JsonObject request = createRequest(address, method, body, parameters);
             eventBus.send(address, request, defaultResponseHandler(routingContext));
         } catch (SerializerException e) {
             LOG.error("Can not serialize request", e);

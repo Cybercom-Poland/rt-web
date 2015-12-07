@@ -22,7 +22,7 @@ public final class HandlerFactory {
         return new DefaultGetHandler(eventBus);
     }
 
-    public static Handler<RoutingContext> defaultWebSocketHandler(Vertx vertx) {
+    public static Handler<RoutingContext> defaultWebSocketHandler(final Vertx vertx) {
         return new DefaultWebSocketHandler(vertx);
     }
 
