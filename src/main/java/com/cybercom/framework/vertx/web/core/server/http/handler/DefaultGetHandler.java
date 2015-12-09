@@ -4,7 +4,6 @@ import com.cybercom.framework.vertx.web.core.serializer.DefaultSerializer;
 import com.cybercom.framework.vertx.web.core.serializer.SerializerException;
 import com.cybercom.framework.vertx.web.core.serializer.spec.Serializer;
 import com.cybercom.framework.vertx.web.core.server.http.context.RoutingContextWrapper;
-import com.cybercom.framework.vertx.web.core.server.http.request.Method;
 import com.cybercom.framework.vertx.web.core.server.http.request.Request;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
@@ -80,22 +79,11 @@ final class DefaultGetHandler implements Handler<RoutingContext> {
     private void handle(final RoutingContextWrapper routingContext, final String address, final String method, final
     Object body, final Map<String, Object> parameters) {
         try {
-            final JsonObject request = createRequest(address, method, body, parameters);
+            final JsonObject request = serializer.serialize(new Request.RequestBuilder(address, method).body(body).parameters(parameters).build());
             eventBus.send(address, request, defaultResponseHandler(routingContext));
         } catch (SerializerException e) {
             LOG.error("Can not serialize request", e);
             routingContext.badRequest();
         }
-    }
-
-    private JsonObject createRequest(final String address, final String method, final Object body, final Map<String, Object> parameters) throws SerializerException {
-        final Request request = new Request();
-        request.setMethod(Method.GET);
-        request.setAddress(address);
-        request.setMethodToInvoke(method);
-        request.setParameters(parameters);
-        request.setBody(body);
-
-        return serializer.serialize(request);
     }
 }

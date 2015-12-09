@@ -1,11 +1,18 @@
 var socket;
+//TODO add rt-web wrapper
 var modelObject = {
-    someText: "string",
-    someNumber: 43,
-    someBollean: true,
-    embededObject: {
-        name: "mic"
-    }    
+     method: null,
+     address: "/second",
+     methodToInvoke: "/methodToInvoke",
+     parameters: null,
+     body: {
+        someText: "string",
+            someNumber: 43,
+            someBollean: true,
+            embededObject: {
+                name: "mic"
+            }
+     }
 };
 
 var sock = new SockJS('localhost:8081/ws');
@@ -23,5 +30,5 @@ sock.onclose = function() {
 };
 
 var send = function() {
-    sock.send(modelObject);
+    sock.send(JSON.stringify(modelObject));
 }

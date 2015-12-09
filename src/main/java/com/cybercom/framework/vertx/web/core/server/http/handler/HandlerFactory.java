@@ -8,14 +8,19 @@ import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.StaticHandler;
+import io.vertx.ext.web.handler.sockjs.SockJSHandler;
+import io.vertx.ext.web.handler.sockjs.SockJSSocket;
 
 public final class HandlerFactory {
     private HandlerFactory() {
     }
 
-    public static Handler<AsyncResult<Message<Object>>> defaultResponseHandler(final RoutingContextWrapper
-                                                                                       routingContext) {
+    public static Handler<AsyncResult<Message<Object>>> defaultResponseHandler(final RoutingContextWrapper routingContext) {
         return new DefaultResponseHandler<>(routingContext);
+    }
+
+    public static Handler<AsyncResult<Message<Object>>> defaultWebSocketResponseHandler(final SockJSSocket sockJSHandlerHandler) {
+        return new DefaultWebSocketResponseHandler(sockJSHandlerHandler);
     }
 
     public static Handler<RoutingContext> defaultGetHandler(final EventBus eventBus) {

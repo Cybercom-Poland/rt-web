@@ -9,6 +9,17 @@ public final class Request {
     private Map<String, Object> parameters;
     private Object body;
 
+    public Request() {
+    }
+
+    private Request(RequestBuilder requestBuilder) {
+        this.method = requestBuilder.method;
+        this.address = requestBuilder.address;
+        this.methodToInvoke = requestBuilder.methodToInvoke;
+        this.parameters = requestBuilder.parameters;
+        this.body = requestBuilder.body;
+    }
+
     public Method getMethod() {
         return method;
     }
@@ -47,5 +58,37 @@ public final class Request {
 
     public void setBody(Object body) {
         this.body = body;
+    }
+
+    public static final class RequestBuilder {
+        private Method method;
+        private final String address;
+        private final String methodToInvoke;
+        private Map<String, Object> parameters;
+        private Object body;
+
+        public RequestBuilder(String address, String methodToInvoke) {
+            this.address = address;
+            this.methodToInvoke = methodToInvoke;
+        }
+
+        public RequestBuilder method(Method method) {
+            this.method = method;
+            return this;
+        }
+
+        public RequestBuilder parameters(Map<String, Object> parameters) {
+            this.parameters = parameters;
+            return this;
+        }
+
+        public RequestBuilder body(Object body) {
+            this.body = body;
+            return this;
+        }
+
+        public Request build() {
+            return new Request(this);
+        }
     }
 }
