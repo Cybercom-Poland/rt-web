@@ -79,8 +79,9 @@ final class DefaultGetHandler implements Handler<RoutingContext> {
     private void handle(final RoutingContextWrapper routingContext, final String address, final String method, final
     Object body, final Map<String, Object> parameters) {
         try {
-            final JsonObject request = serializer.serialize(new Request.RequestBuilder(address, method).body(body).parameters(parameters).build());
-            eventBus.send(address, request, defaultResponseHandler(routingContext));
+            Request request = new Request.RequestBuilder(address, method).body(body).parameters(parameters).build();
+            final JsonObject requestJson = serializer.serialize(request);
+            eventBus.send(address, requestJson, defaultResponseHandler(routingContext));
         } catch (SerializerException e) {
             LOG.error("Can not serialize request", e);
             routingContext.badRequest();

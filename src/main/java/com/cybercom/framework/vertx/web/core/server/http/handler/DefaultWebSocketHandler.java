@@ -6,6 +6,7 @@ import com.cybercom.framework.vertx.web.core.serializer.spec.Serializer;
 import com.cybercom.framework.vertx.web.core.server.http.request.Request;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -36,6 +37,8 @@ final public class DefaultWebSocketHandler implements Handler<RoutingContext> {
                     eventBus.send(request.getAddress(), jsonRequest, HandlerFactory.defaultWebSocketResponseHandler(sockJSSocketHandler));
                 } catch (SerializerException e) {
                     LOG.error("Can not deserialize request", e);
+                    //TODO rethink error handling
+                    sockJSSocketHandler.write(Buffer.buffer("An error occured"));
                 }
             });
         });
