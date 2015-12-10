@@ -2,3 +2,5 @@
 /.gradle
 *.iml
 /build
+/src/web/node_modules
+/src/web/dist
