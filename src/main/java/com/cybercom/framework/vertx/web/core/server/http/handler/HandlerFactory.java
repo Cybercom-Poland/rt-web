@@ -1,6 +1,7 @@
 package com.cybercom.framework.vertx.web.core.server.http.handler;
 
 import com.cybercom.framework.vertx.web.core.server.http.context.RoutingContextWrapper;
+import com.cybercom.framework.vertx.web.core.server.http.request.Method;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -22,8 +23,8 @@ public final class HandlerFactory {
         return new DefaultWebSocketResponseHandler(sockJSHandlerHandler);
     }
 
-    public static Handler<RoutingContext> defaultGetHandler(final EventBus eventBus) {
-        return new DefaultGetHandler(eventBus);
+    public static Handler<RoutingContext> defaultRestRequestHandler(final EventBus eventBus, final Method method) {
+        return new DefaultRestRequestHandler(eventBus, method);
     }
 
     public static Handler<RoutingContext> defaultWebSocketHandler(final Vertx vertx) {

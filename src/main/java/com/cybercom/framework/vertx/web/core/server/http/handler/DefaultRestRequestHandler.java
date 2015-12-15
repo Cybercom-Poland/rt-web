@@ -4,6 +4,7 @@ import com.cybercom.framework.vertx.web.core.serializer.DefaultSerializer;
 import com.cybercom.framework.vertx.web.core.serializer.SerializerException;
 import com.cybercom.framework.vertx.web.core.serializer.spec.Serializer;
 import com.cybercom.framework.vertx.web.core.server.http.context.RoutingContextWrapper;
+import com.cybercom.framework.vertx.web.core.server.http.request.Method;
 import com.cybercom.framework.vertx.web.core.server.http.request.Request;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
@@ -11,19 +12,25 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.RoutingContext;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
 
 import static com.cybercom.framework.vertx.web.core.server.http.handler.HandlerFactory.defaultResponseHandler;
 
-final class DefaultGetHandler implements Handler<RoutingContext> {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultGetHandler.class);
+final class DefaultRestRequestHandler implements Handler<RoutingContext> {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultRestRequestHandler.class);
     private final EventBus eventBus;
+    private final Method method;
     private Serializer serializer;
 
-    public DefaultGetHandler(final EventBus eventBus) {
+    public DefaultRestRequestHandler(final EventBus eventBus, final Method method) {
         this.eventBus = eventBus;
         this.serializer = new DefaultSerializer();
+        this.method = method;
     }
 
     @Override
@@ -32,9 +39,9 @@ final class DefaultGetHandler implements Handler<RoutingContext> {
 
         final String uri = routingContext.uri();
         final String address = getAddressFromUri(uri);
-        final String method = getMethodFromUri(uri);
+        final String methodToInvoke = getMethodFromUri(uri);
 
-        if (address.isEmpty() || method.isEmpty()) {
+        if (address.isEmpty() || methodToInvoke.isEmpty()) {
             routingContext.badRequest();
             return;
         }
@@ -42,7 +49,7 @@ final class DefaultGetHandler implements Handler<RoutingContext> {
         final Object body = null;
         final Map<String, Object> parameters = new HashMap<>();
 
-        handle(routingContext, address, method, body, parameters);
+        handle(routingContext, address, methodToInvoke, body, parameters);
     }
 
     private String getAddressFromUri(String uri) {
@@ -76,10 +83,10 @@ final class DefaultGetHandler implements Handler<RoutingContext> {
         return new ArrayList<>(Arrays.asList(uri.split("(?=/)")));
     }
 
-    private void handle(final RoutingContextWrapper routingContext, final String address, final String method, final
+    private void handle(final RoutingContextWrapper routingContext, final String address, final String methodToInvoke, final
     Object body, final Map<String, Object> parameters) {
         try {
-            Request request = new Request.RequestBuilder(address, method).body(body).parameters(parameters).build();
+            Request request = new Request.RequestBuilder(address, methodToInvoke).body(body).parameters(parameters).method(method). build();
             final JsonObject requestJson = serializer.serialize(request);
             eventBus.send(address, requestJson, defaultResponseHandler(routingContext));
         } catch (SerializerException e) {

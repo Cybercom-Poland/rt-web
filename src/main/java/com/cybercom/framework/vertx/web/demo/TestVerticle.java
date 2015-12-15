@@ -2,6 +2,7 @@ package com.cybercom.framework.vertx.web.demo;
 
 import com.cybercom.framework.vertx.web.core.routing.annotation.Routing;
 import com.cybercom.framework.vertx.web.core.routing.annotation.Verticle;
+import com.cybercom.framework.vertx.web.core.server.http.request.Method;
 import com.cybercom.framework.vertx.web.core.verticle.AbstractVerticle;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -21,6 +22,20 @@ public class TestVerticle extends AbstractVerticle {
         LOG.info("Invoked method: methodToInvoke");
 
         return "Heh dziala";
+    }
+
+    @Routing(URL = "/methodToInvoke", method = Method.POST)
+    public String methodToInvokePostWithSameName() {
+        LOG.info("Invoked method: methodToInvoke");
+
+        return "Heh dziala  2";
+    }
+
+    @Routing(URL = "/methodToInvokePost", method = Method.POST)
+    public String methodToInvokePost() {
+        LOG.info("Invoked method: methodToInvoke");
+
+        return "Heh dziala jako POST";
     }
 
     @Routing(URL = "/secondMethod")

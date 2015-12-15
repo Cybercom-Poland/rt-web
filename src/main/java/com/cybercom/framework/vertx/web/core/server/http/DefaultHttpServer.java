@@ -1,6 +1,7 @@
 package com.cybercom.framework.vertx.web.core.server.http;
 
 import com.cybercom.framework.vertx.web.core.server.http.handler.HandlerFactory;
+import com.cybercom.framework.vertx.web.core.server.http.request.Method;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -33,8 +34,11 @@ public class DefaultHttpServer extends AbstractServer {
         final EventBus eventBus = vertx.eventBus();
 
         //TODO is good place for this ? hmmm
-        final Handler<RoutingContext> getHandler = HandlerFactory.defaultGetHandler(eventBus);
+        final Handler<RoutingContext> getHandler = HandlerFactory.defaultRestRequestHandler(eventBus, Method.GET);
         mainRouter.get(contextPath).handler(getHandler);
+
+        final Handler<RoutingContext> postHandler = HandlerFactory.defaultRestRequestHandler(eventBus, Method.POST);
+        mainRouter.post(contextPath).handler(postHandler);
 
         final Handler<RoutingContext> staticResourcesHandler = HandlerFactory.defaultStaticResourceHandler();
         mainRouter.route().handler(staticResourcesHandler);

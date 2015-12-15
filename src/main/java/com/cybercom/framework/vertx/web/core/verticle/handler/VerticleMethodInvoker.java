@@ -52,8 +52,9 @@ public final class VerticleMethodInvoker implements Handler<Message<JsonObject>>
 
     private Optional<MethodWithRouting> findMethodToInvoke(final Request request) {
         final String methodToInvoke = request.getMethodToInvoke();
+        final com.cybercom.framework.vertx.web.core.server.http.request.Method method = request.getMethod();
 
-        return verticleMethods.findMethod(methodToInvoke);
+        return verticleMethods.findMethod(methodToInvoke, method);
     }
 
     private void invokeMethod(final Message<JsonObject> requestMessage, final MethodWithRouting methodWithRouting) {
