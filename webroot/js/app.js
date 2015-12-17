@@ -1,7 +1,7 @@
 var socket;
 //TODO add rt-web wrapper
 var modelObject = {
-     method: null,
+     method: "GET",
      address: "/second",
      methodToInvoke: "/methodToInvoke",
      parameters: null,
@@ -15,20 +15,20 @@ var modelObject = {
      }
 };
 
-var sock = new SockJS('localhost:8081/ws');
+var sock = new RtWeb('localhost:8081/ws');
 
-sock.onopen = function() {
-  console.log('open');
-};
+sock.onopen(function() {
+    console.log('open')
+})
 
-sock.onmessage = function(e) {
+sock.onmessage(function(e) {
   console.log('message', e.data);
-};
+});
 
-sock.onclose = function() {
+sock.onclose(function() {
   console.log('close');
-};
+});
 
 var send = function() {
-    sock.send(JSON.stringify(modelObject));
+    sock.send(modelObject);
 }
