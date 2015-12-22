@@ -1,8 +1,8 @@
 package com.cybercom.framework.vertx.web.core.verticle;
 
-import com.cybercom.framework.vertx.web.core.routing.annotation.Routing;
+import com.cybercom.framework.vertx.web.core.annotations.routing.Routing;
 import com.cybercom.framework.vertx.web.core.scanner.ClassScanner;
-import com.cybercom.framework.vertx.web.core.scanner.method.MethodWithRouting;
+import com.cybercom.framework.vertx.web.core.scanner.method.MethodMetadata;
 import com.cybercom.framework.vertx.web.core.verticle.handler.VerticleMethodInvoker;
 import com.cybercom.framework.vertx.web.core.verticle.method.VerticleMethods;
 import io.vertx.core.Context;
@@ -24,7 +24,7 @@ public abstract class AbstractVerticle extends io.vertx.core.AbstractVerticle {
         final Optional<Routing> annotationFromClass = classScanner.getAnnotation(this.getClass(), Routing.class);
 
         if(annotationFromClass.isPresent()) {
-            final List<MethodWithRouting> methodsWithRouting = classScanner.getMethodsWithRouting(this.getClass());
+            final List<MethodMetadata> methodsWithRouting = classScanner.getMethodsWithRouting(this.getClass());
             final VerticleMethods verticleMethods = new VerticleMethods(methodsWithRouting);
 
             final VerticleMethodInvoker verticleMethodInvoker = new VerticleMethodInvoker(verticleMethods, this);

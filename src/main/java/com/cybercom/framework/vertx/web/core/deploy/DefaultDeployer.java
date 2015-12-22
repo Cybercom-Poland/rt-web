@@ -34,7 +34,7 @@ public final class DefaultDeployer extends AbstractDeployer{
     }
 
     private Set<Class<?>> scanClasses() {
-        return classScanner.getClassesAnnotatedWith(com.cybercom.framework.vertx.web.core.routing.annotation.Verticle.class);
+        return classScanner.getClassesAnnotatedWith(com.cybercom.framework.vertx.web.core.annotations.routing.Verticle.class);
     }
 
     private List<Verticle> createObjects(final Set<Class<?>> classes) {
@@ -48,11 +48,10 @@ public final class DefaultDeployer extends AbstractDeployer{
     }
     
     private VerticleWithConfig buildVerticleConfig(final Verticle verticle) {
-        final Optional<com.cybercom.framework.vertx.web.core.routing.annotation.Verticle> annotation
-                = classScanner.getAnnotation(verticle.getClass(), com.cybercom.framework.vertx.web.core.routing
-                .annotation.Verticle.class);
+        final Optional<com.cybercom.framework.vertx.web.core.annotations.routing.Verticle> annotation
+                = classScanner.getAnnotation(verticle.getClass(), com.cybercom.framework.vertx.web.core.annotations.routing.Verticle.class);
 
-        final com.cybercom.framework.vertx.web.core.routing.annotation.Verticle verticleAnnotation = annotation
+        final com.cybercom.framework.vertx.web.core.annotations.routing.Verticle verticleAnnotation = annotation
                 .orElseThrow(() -> new DeployException("Can not deploy " + verticle.getClass()));
 
         return new VerticleWithConfig(verticle, verticleAnnotation.instances(), verticleAnnotation.worker());

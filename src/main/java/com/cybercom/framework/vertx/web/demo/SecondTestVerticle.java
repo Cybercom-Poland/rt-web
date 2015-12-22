@@ -1,7 +1,7 @@
 package com.cybercom.framework.vertx.web.demo;
 
-import com.cybercom.framework.vertx.web.core.routing.annotation.Routing;
-import com.cybercom.framework.vertx.web.core.routing.annotation.Verticle;
+import com.cybercom.framework.vertx.web.core.annotations.routing.Routing;
+import com.cybercom.framework.vertx.web.core.annotations.routing.Verticle;
 import com.cybercom.framework.vertx.web.core.verticle.AbstractVerticle;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;

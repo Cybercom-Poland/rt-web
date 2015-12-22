@@ -1,6 +1,6 @@
 package com.cybercom.framework.vertx.web.demo;
 
-import com.cybercom.framework.vertx.web.core.routing.annotation.Verticle;
+import com.cybercom.framework.vertx.web.core.annotations.routing.Verticle;
 import com.cybercom.framework.vertx.web.core.server.http.DefaultHttpServer;
 import io.vertx.core.http.HttpServerOptions;
 

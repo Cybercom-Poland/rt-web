@@ -1,18 +1,17 @@
 package com.cybercom.framework.vertx.web.core.verticle.handler;
 
 import com.cybercom.framework.vertx.web.core.error.ErrorCodes;
-import com.cybercom.framework.vertx.web.core.scanner.method.MethodWithRouting;
 import com.cybercom.framework.vertx.web.core.serializer.DefaultSerializer;
 import com.cybercom.framework.vertx.web.core.serializer.SerializerException;
 import com.cybercom.framework.vertx.web.core.serializer.spec.Serializer;
 import com.cybercom.framework.vertx.web.core.server.http.request.Request;
+import com.cybercom.framework.vertx.web.core.verticle.method.ExecutableMethod;
 import com.cybercom.framework.vertx.web.core.verticle.method.VerticleMethods;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import java.lang.reflect.Method;
 import java.util.Optional;
 
 public final class VerticleMethodInvoker implements Handler<Message<JsonObject>> {
@@ -40,28 +39,23 @@ public final class VerticleMethodInvoker implements Handler<Message<JsonObject>>
     }
 
     private void handleRequest(final Request request, final Message<JsonObject> requestMessage){
-        final Optional<MethodWithRouting> methodToInvokeOptional = findMethodToInvoke(request);
+        final Optional<ExecutableMethod> executableMethodOptiona = findMethodToInvoke(request);
 
-        if(methodToInvokeOptional.isPresent()) {
-            final MethodWithRouting methodWithRouting = methodToInvokeOptional.get();
-            invokeMethod(requestMessage, methodWithRouting);
+        if(executableMethodOptiona.isPresent()) {
+            final ExecutableMethod executableMethod = executableMethodOptiona.get();
+            invokeMethod(requestMessage, executableMethod);
         } else {
             requestMessage.fail(ErrorCodes.METHOD_NOT_FOUND, request.getMethodToInvoke() + " not found");
         }
     }
 
-    private Optional<MethodWithRouting> findMethodToInvoke(final Request request) {
-        final String methodToInvoke = request.getMethodToInvoke();
-        final com.cybercom.framework.vertx.web.core.server.http.request.Method method = request.getMethod();
-
-        return verticleMethods.findMethod(methodToInvoke, method);
+    private Optional<ExecutableMethod> findMethodToInvoke(final Request request) {
+        return verticleMethods.findMethod(request);
     }
 
-    private void invokeMethod(final Message<JsonObject> requestMessage, final MethodWithRouting methodWithRouting) {
-        final Method method = methodWithRouting.getMethod();
-
+    private void invokeMethod(final Message<JsonObject> requestMessage, final ExecutableMethod executableMethod) {
         try {
-            final Object response = method.invoke(parentClass);
+            final Object response = executableMethod.invoke(parentClass);
             requestMessage.reply(response);
         } catch (Exception e) {
             LOG.error("Can not invoke method", e);

@@ -1,7 +1,8 @@
 package com.cybercom.framework.vertx.web.demo;
 
-import com.cybercom.framework.vertx.web.core.routing.annotation.Routing;
-import com.cybercom.framework.vertx.web.core.routing.annotation.Verticle;
+import com.cybercom.framework.vertx.web.core.annotations.method.MethodParameter;
+import com.cybercom.framework.vertx.web.core.annotations.routing.Routing;
+import com.cybercom.framework.vertx.web.core.annotations.routing.Verticle;
 import com.cybercom.framework.vertx.web.core.server.http.request.Method;
 import com.cybercom.framework.vertx.web.core.verticle.AbstractVerticle;
 import io.vertx.core.logging.Logger;
@@ -43,5 +44,12 @@ public class TestVerticle extends AbstractVerticle {
         LOG.info("Invoked method: secondMethod");
 
         return "ostro";
+    }
+
+    @Routing(URL = "/secondMethodWithParameter")
+    public String secondMethodWithparameter(@MethodParameter("name") final String name) {
+        LOG.info("Invoked method: secondMethod with parameter: = " + name);
+
+        return "Invoked method: secondMethod with parameter: = " + name;
     }
 }
