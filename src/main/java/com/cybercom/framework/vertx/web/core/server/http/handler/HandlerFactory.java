@@ -7,9 +7,9 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
+import io.vertx.core.http.ServerWebSocket;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.StaticHandler;
-import io.vertx.ext.web.handler.sockjs.SockJSSocket;
 
 public final class HandlerFactory {
     private HandlerFactory() {
@@ -19,16 +19,16 @@ public final class HandlerFactory {
         return new DefaultResponseHandler<>(routingContext);
     }
 
-    public static Handler<AsyncResult<Message<Object>>> defaultWebSocketResponseHandler(final SockJSSocket sockJSHandlerHandler) {
-        return new DefaultWebSocketResponseHandler(sockJSHandlerHandler);
+    public static Handler<AsyncResult<Message<Object>>> defaultWebSocketResponseHandler(final ServerWebSocket serverWebSocket) {
+        return new DefaultWebSocketResponseHandler(serverWebSocket);
     }
 
     public static Handler<RoutingContext> defaultRestRequestHandler(final EventBus eventBus, final Method method) {
         return new DefaultRestRequestHandler(eventBus, method);
     }
 
-    public static Handler<RoutingContext> defaultWebSocketHandler(final Vertx vertx) {
-        return new DefaultWebSocketHandler(vertx);
+    public static Handler<ServerWebSocket> defaultWebSocketHandler(final Vertx vertx, final String contextPath) {
+        return new DefaultWebSocketHandler(vertx, contextPath);
     }
 
     public static Handler<RoutingContext> defaultStaticResourceHandler() {

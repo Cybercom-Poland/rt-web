@@ -8,44 +8,49 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.handler.sockjs.SockJSHandler;
-import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
 
-
-final public class DefaultWebSocketHandler implements Handler<RoutingContext> {
+final public class DefaultWebSocketHandler implements Handler<ServerWebSocket> {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultWebSocketHandler.class);
-    private final SockJSHandler sockJSHandler;
     private final Serializer serializer;
     private final EventBus eventBus;
+    private final String contextPath;
 
-    public DefaultWebSocketHandler(Vertx vertx) {
-        SockJSHandlerOptions options = new SockJSHandlerOptions().setHeartbeatInterval(2000);
-
+    public DefaultWebSocketHandler(final Vertx vertx, final String contextPath) {
         this.serializer = new DefaultSerializer();
-        sockJSHandler = SockJSHandler.create(vertx, options);
-        eventBus = vertx.eventBus();
-
-        sockJSHandler.socketHandler(sockJSSocketHandler -> {
-            sockJSSocketHandler.handler(buffer -> {
-                JsonObject jsonRequest = new JsonObject(buffer.toString());
-                try {
-                    final Request request = serializer.deserialize(jsonRequest, Request.class);
-                    eventBus.send(request.getAddress(), jsonRequest, HandlerFactory.defaultWebSocketResponseHandler(sockJSSocketHandler));
-                } catch (SerializerException e) {
-                    LOG.error("Can not deserialize request", e);
-                    //TODO rethink error handling
-                    sockJSSocketHandler.write(Buffer.buffer("An error occured"));
-                }
-            });
-        });
+        this.eventBus = vertx.eventBus();
+        this.contextPath = contextPath;
     }
 
     @Override
-    public void handle(RoutingContext event) {
-        sockJSHandler.handle(event);
+    public void handle(final ServerWebSocket webSocket) {
+        if(isSupportedContextPath(webSocket)) {
+            webSocket.handler(buffer -> handleBuffer(webSocket, buffer));
+        } else {
+            webSocket.reject();
+        }
+    }
+
+    private boolean isSupportedContextPath(final ServerWebSocket webSocket) {
+        return webSocket.path().equals(contextPath);
+    }
+
+    private void handleBuffer(final ServerWebSocket webSocket, final Buffer buffer) {
+        final JsonObject jsonRequest = new JsonObject(buffer.toString());
+        handleBuffer(webSocket, jsonRequest);
+    }
+
+    private void handleBuffer(final ServerWebSocket webSocket, final JsonObject jsonRequest) {
+        try {
+            final Request request = serializer.deserialize(jsonRequest, Request.class);
+            eventBus.send(request.getAddress(), jsonRequest, HandlerFactory.defaultWebSocketResponseHandler(webSocket));
+        } catch (SerializerException e) {
+            LOG.error("Can not deserialize request", e);
+            //TODO rethink error handling
+            webSocket.write(Buffer.buffer("An error occured"));
+        }
     }
 }

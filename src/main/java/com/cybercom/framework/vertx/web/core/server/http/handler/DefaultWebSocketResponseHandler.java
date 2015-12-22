@@ -2,24 +2,23 @@ package com.cybercom.framework.vertx.web.core.server.http.handler;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.Message;
-import io.vertx.ext.web.handler.sockjs.SockJSSocket;
+import io.vertx.core.http.ServerWebSocket;
 
 
 public class DefaultWebSocketResponseHandler implements Handler<AsyncResult<Message<Object>>> {
-    private final SockJSSocket sockJSSocket;
+    private final ServerWebSocket serverWebSocket;
 
-    public DefaultWebSocketResponseHandler(SockJSSocket sockJSSocket) {
-        this.sockJSSocket = sockJSSocket;
+    public DefaultWebSocketResponseHandler(final ServerWebSocket serverWebSocket) {
+        this.serverWebSocket = serverWebSocket;
     }
 
     @Override
     public void handle(AsyncResult<Message<Object>> event) {
         if (event.succeeded()) {
-            sockJSSocket.write(Buffer.buffer(event.result().body().toString()));
+            serverWebSocket.writeFinalTextFrame(event.result().body().toString());
         } else {
-            sockJSSocket.write(Buffer.buffer("failure ;("));
+            serverWebSocket.writeFinalTextFrame("failure ;(");
         }
 
     }
